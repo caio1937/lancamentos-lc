@@ -1,7 +1,7 @@
 /* Lançamentos LC — guarda o app no celular para abrir sem internet.
    Só o próprio app fica guardado; os envios para a planilha (script.google.com) nunca passam pelo cache. */
-const CACHE = 'lanc-lc-v1';
-const ARQS = ['./', './index.html', './manifest.webmanifest', './icone-192.png', './icone-512.png'];
+const CACHE = 'lanc-lc-v2';
+const ARQS = ['./', './index.html', './pdf.js', './lib/jspdf.umd.min.js', './lib/jspdf.plugin.autotable.min.js', './manifest.webmanifest', './icone-192.png', './icone-512.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQS)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {
