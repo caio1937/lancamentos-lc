@@ -338,7 +338,7 @@ const dataHora=s=>{ const d=new Date(s); if(isNaN(d)) return ''; const so=d.getH
   return so?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); };
 const diaBR=s=>s&&/^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4):dataBR(s);
 const CATS={Empresa:['Combustível Doblò','Manutenção Doblò','Peças / material','Ferramentas','Alimentação','Internet / telefone','Outros da empresa'],
-            Pessoal:['Sítio / chácara','Mercado','Combustível Jeep','Farmácia','Casa','Animais','Outros pessoais']};
+            Pessoal:['Sítio / chácara','Mercado','Combustível Jeep','Manutenção Jeep','Farmácia','Casa','Animais','Outros pessoais']};
 const UN_NOME={RL:'rolo',ROL:'rolo',BB:'bobina',BOB:'bobina',CX:'caixa',PCT:'pacote',PAC:'pacote',PT:'pacote',M:'metro',MT:'metro',MTS:'metro',UN:'unidade',PC:'peça',PEC:'peça',PAR:'par',KIT:'kit',CJ:'conjunto',JG:'jogo'};
 const unN=u=>UN_NOME[String(u||'').toUpperCase()]||String(u||'').toLowerCase()||'unidade';
 const SIT={analise:['Em análise','analise'],aprovado:['Aprovado','aprovado'],recusado:['Recusado','recusado'],descartado:['Descartado','descartado']};
