@@ -114,7 +114,8 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
 .prod .t{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.prod .t b{font-size:14.5px;font-weight:650}
 .prod .p{font:650 17px var(--num);white-space:nowrap;color:var(--accent)}
 .prod .precos{display:grid;grid-template-columns:1fr 1fr;gap:8px}.prod .precos>div{background:var(--soft);border-radius:8px;padding:6px 9px;display:grid;gap:1px}.prod .precos span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.03em}.prod .precos b{font-family:var(--num);font-size:16px}.prod .precos small{font-size:11.5px;color:var(--ink2)}.prod .precos .cmp{background:transparent;border:1px dashed var(--line)}
-.item .cod .usar{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:2px;color:var(--accent)}.sug small .uv{font-style:normal;color:var(--accent);font-weight:600}
+.prod .vh{display:grid;gap:2px;font-size:12.5px}.prod .vh>span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.03em}.prod .vh>div{display:grid;grid-template-columns:86px 62px 1fr;gap:6px;align-items:baseline}.prod .vh b{font-family:var(--num)}.prod .vh em{font-style:normal;color:var(--ink2)}.prod .vh i{font-style:normal;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .cod .alt{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}.item .cod .usar{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:2px;color:var(--accent)}.sug small .uv{font-style:normal;color:var(--accent);font-weight:600}
 .prod .c{font-size:12.5px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:6px 9px}.prod .c b{font-family:var(--num)}
 .olho{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:20px;padding:6px 11px;font-size:13px;font-weight:700;white-space:nowrap}
 .olho[aria-pressed="true"]{background:#f7c46c;color:#3b2a06;border-color:#f7c46c}
@@ -170,7 +171,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
       <div class="row"><label>Telefone<input id="v-tel" inputmode="tel"></label><label>Cidade / local<input id="v-loc" placeholder="Canoinhas"></label></div>
       <div><div class="lbl">Empresa / nota</div><div class="seg" id="v-emp"><button type="button" data-v="Marilete">Marilete</button><button type="button" data-v="Dayane">Dayane</button><button type="button" data-v="Luiz">Luiz</button><button type="button" data-v="Sem nota">Sem nota</button></div></div>
     </div>
-    <div class="card"><h3>Peças e materiais</h3><p class="note" style="margin:-6px 0 0">Digite parte do nome para buscar no catálogo; o preço vem sozinho.</p>
+    <div class="card"><h3>Peças e materiais</h3><p class="note" style="margin:-6px 0 0">Digite parte do nome para buscar no catálogo; vem o preço da última venda a um cliente (no Eficaz).</p>
       <div class="item note" style="font-weight:600"><span>Descrição</span><span>Qtd</span><span>Valor un.</span><span></span></div>
       <div id="v-itens" style="display:grid;gap:8px"></div><button type="button" class="add" id="v-add">+ item</button></div>
     <div class="card"><h3>Mão de obra e pagamento</h3>
@@ -466,7 +467,7 @@ $('alerta-x').onclick=()=>$('alerta').hidden=true; $('aviso-x').onclick=()=>$('a
 let CAT=ler('lc-cat',null), PRODS=[], SERV=[], CLIS=[];
 function prepararCat(){ PRODS=[]; SERV=[]; CLIS=[]; if(!CAT) return;
   const ix={}; (CAT.campos||[]).forEach((c,i)=>ix[c]=i);
-  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',uvp:ix.ult_venda_preco!=null?r[ix.ult_venda_preco]:null,codfab:r[ix.codfab]||''};
+  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',uvp:ix.ult_venda_preco!=null?r[ix.ult_venda_preco]:null,vh:ix.vendas!=null?(r[ix.vendas]||[]):[],codfab:r[ix.codfab]||''}; p.pv=p.uvp||p.preco;   // preço de venda = o último cobrado de um cliente no Eficaz (sem venda: o do cadastro)
     p.k=sa(p.nome+' '+p.codfab+' '+p.cod+' '+p.grupo); return p; });
   SERV=(CAT.servicos||[]).map(s=>({desc:s[0],valor:s[1]}));
   CLIS=(CAT.clientes||[]).map(c=>({nome:c[0],fone:c[1]||'',cidade:c[2]||'',endereco:c[3]||'',k:sa(c[0]+' '+(c[4]||''))}));
@@ -496,15 +497,16 @@ function ligarCliente(inp,aoEscolher){ const caixa=inp.closest('.campo-sug');
 function ligarBusca(row,aoEscolher){ const inp=row.querySelector('input');
   inp.addEventListener('input',()=>{ fecharSug(); delete row.dataset.cod; const c=row.querySelector('.cod'); if(c) c.remove();
     if(inp.value.trim().length<2||!PRODS.length) return; const r=buscar(inp.value,'',8); if(!r.length) return;
-    mostrarSug(row,r.map((p,i)=>`<button type="button" data-i="${i}"><b>${esc(p.nome)}</b><span>${brl(p.preco)}</span><small>${p.uvp?`<em class="uv">última venda ${brl(p.uvp)} em ${diaCurto(p.uv)}</em> · `:'sem venda registrada · '}por ${esc(unN(p.un))} · cód. ${esc(p.cod)}${p.estoque?` · estoque ${numBR(p.estoque)}`:''}</small></button>`).join(''),i=>aoEscolher(row,r[i])); });
+    mostrarSug(row,r.map((p,i)=>`<button type="button" data-i="${i}"><b>${esc(p.nome)}</b><span>${brl(p.pv)}</span><small>${p.uvp?`<em class="uv">vendido em ${diaCurto(p.uv)}${p.vh[0]&&p.vh[0][2]?' · '+esc(p.vh[0][2]):''}</em>`:'nunca vendido · preço do cadastro'} · por ${esc(unN(p.un))} · cód. ${esc(p.cod)}${p.estoque?` · estoque ${numBR(p.estoque)}`:''}</small></button>`).join(''),i=>aoEscolher(row,r[i])); });
   inp.addEventListener('blur',()=>setTimeout(()=>fecharSug(row),150)); }
 document.addEventListener('click',e=>{ if(SUG&&!e.target.closest('.sug')&&!e.target.closest('.item')&&!e.target.closest('.campo-sug')) fecharSug(); });
 
 /* linhas de item e de mão de obra */
-function preencherItem(row,p,qtd){ const i=row.querySelectorAll('input'); i[0].value=p.nome; if(qtd) i[1].value=String(qtd).replace('.',','); else if(!i[1].value) i[1].value='1'; i[2].value=vBR(p.preco);
+function preencherItem(row,p,qtd){ const i=row.querySelectorAll('input'); i[0].value=p.nome; if(qtd) i[1].value=String(qtd).replace('.',','); else if(!i[1].value) i[1].value='1'; i[2].value=vBR(p.pv);
   row.dataset.cod=p.cod; row.dataset.un=p.un; let c=row.querySelector('.cod'); if(!c){ c=document.createElement('div'); c.className='cod'; row.appendChild(c); }
-  const dif=p.uvp&&Math.abs(p.uvp-p.preco)>=0.01;
-  c.innerHTML=`cód. ${esc(p.cod)} · por ${esc(unN(p.un))} · cadastro ${brl(p.preco)}${p.uvp?` · <b>última venda ${brl(p.uvp)}</b> em ${diaCurto(p.uv)}${dif?` <button type="button" class="usar" data-v="${p.uvp}">usar</button> <button type="button" class="usar" data-v="${p.preco}">cadastro</button>`:''}`:' · sem venda registrada'}`;
+  const outros=p.vh.slice(1).filter((v,k,a)=>Math.abs(v[0]-p.pv)>=0.01&&a.findIndex(x=>Math.abs(x[0]-v[0])<0.01)===k);
+  c.innerHTML=`cód. ${esc(p.cod)} · por ${esc(unN(p.un))} · ${p.uvp?`<b>última venda ${brl(p.uvp)}</b> em ${diaCurto(p.uv)}${p.vh[0]&&p.vh[0][2]?' ('+esc(p.vh[0][2])+')':''}`:'nunca vendido: preço do cadastro'}`+
+    (outros.length||(p.uvp&&Math.abs(p.uvp-p.preco)>=0.01)?`<span class="alt">${outros.map(v=>`<button type="button" class="usar" data-v="${v[0]}">${brl(v[0])} em ${diaCurto(v[1])}</button>`).join('')}${p.uvp&&Math.abs(p.uvp-p.preco)>=0.01?`<button type="button" class="usar" data-v="${p.preco}">cadastro ${brl(p.preco)}</button>`:''}${outros.length||p.uvp?`<button type="button" class="usar" data-v="${p.pv}">última</button>`:''}</span>`:'');
   c.querySelectorAll('.usar').forEach(b=>b.onclick=()=>{ i[2].value=vBR(+b.dataset.v); row.dispatchEvent(new Event('input',{bubbles:true})); });
   row.dispatchEvent(new Event('input',{bubbles:true})); }
 function linhaItem(box,aoMudar){ const d=document.createElement('div'); d.className='item';
@@ -751,14 +753,15 @@ function renderProd(){
   $('p-grp').innerHTML=grupos.map(g=>`<button type="button" data-v="${esc(g)}" aria-pressed="${g===P_GRP}">${esc(g)}</button>`).join('');
   const q=$('p-q').value; const r=buscar(q,P_GRP,60);
   if(!PRODS.length){ $('p-lista').innerHTML=''; return; }
-  if(!q.trim()&&!P_GRP){ $('p-lista').innerHTML='<p class="vazio">Digite parte do nome, o código ou escolha um grupo.<br>Aparecem o preço do cadastro, a última venda e a última compra. Para mostrar a tela ao cliente, toque em 👁 Compra (no topo) e o preço de compra some.</p>'; return; }
-  $('p-lista').innerHTML=r.map((p,i)=>{ const mg=p.cu&&p.preco?(p.preco-p.cu)/p.preco*100:null;
-    const cqD=(p.cq||'').split(' ')[0], cqF=(p.cq||'').split(' ').slice(1).join(' '); const mgv=p.cu&&p.uvp?(p.uvp-p.cu)/p.uvp*100:null;
-    return `<div class="prod"><div class="t"><b>${esc(p.nome)}</b><span class="p">${brl(p.preco)}</span></div>
-      <div class="note">cód. ${esc(p.cod)}${p.codfab?' · ref. '+esc(p.codfab):''} · por ${esc(unN(p.un))}${p.estoque?` · estoque ${numBR(p.estoque)}`:' · sem estoque'} · preço do cadastro</div>
-      <div class="precos"><div><span>Última venda</span>${p.uvp?`<b>${brl(p.uvp)}</b><small>em ${diaCurto(p.uv)}</small>`:'<small>sem venda registrada</small>'}</div>
+  if(!q.trim()&&!P_GRP){ $('p-lista').innerHTML='<p class="vazio">Digite parte do nome, o código ou escolha um grupo.<br>O preço em destaque é o da última venda a um cliente no Eficaz (sem venda, o do cadastro). Aparecem também as 3 últimas vendas e a última compra. Para mostrar a tela ao cliente, toque em 👁 Compra (no topo): somem a compra e os nomes e preços de outros clientes.</p>'; return; }
+  $('p-lista').innerHTML=r.map((p,i)=>{
+    const cqD=(p.cq||'').split(' ')[0], cqF=(p.cq||'').split(' ').slice(1).join(' '); const mgv=p.cu&&p.pv?(p.pv-p.cu)/p.pv*100:null;
+    return `<div class="prod"><div class="t"><b>${esc(p.nome)}</b><span class="p">${brl(p.pv)}</span></div>
+      <div class="note">cód. ${esc(p.cod)}${p.codfab?' · ref. '+esc(p.codfab):''} · por ${esc(unN(p.un))}${p.estoque?` · estoque ${numBR(p.estoque)}`:' · sem estoque'}${p.uvp?'':' · <b>nunca vendido</b>: preço do cadastro'}</div>
+      <div class="precos"><div><span>Última venda</span>${p.uvp?`<b>${brl(p.uvp)}</b><small>em ${diaCurto(p.uv)}${OLHO&&p.vh[0]&&p.vh[0][2]?' · '+esc(p.vh[0][2]):''}</small>`:'<small>sem venda registrada</small>'}</div>
       ${OLHO?`<div class="cmp"><span>Última compra</span>${p.cu?`<b>${brl(p.cu)}</b><small>${cqD?'em '+esc(cqD):''}${cqF?' · '+esc(cqF):''}</small>`:'<small>sem compra registrada</small>'}</div>`:''}</div>
-      ${OLHO&&p.cu?`<div class="note">Margem: ${mg!=null?`<b>${mg.toFixed(0)}%</b> no preço do cadastro`:''}${mgv!=null?` · <b>${mgv.toFixed(0)}%</b> na última venda`:''}${p.compra&&/\(com/.test(p.compra)?' · nota: '+esc(p.compra):''}</div>`:''}
+      ${OLHO&&p.vh.length>1?`<div class="vh"><span>Vendas anteriores</span>${p.vh.slice(1).map(v=>`<div><b>${brl(v[0])}</b><em>${diaCurto(v[1])}</em><i>${esc(v[2]||'—')}${v[3]&&v[3]!==1?' · '+numBR(v[3])+' '+esc((p.un||'un').toLowerCase()):''}</i></div>`).join('')}</div>`:''}
+      <div class="note">Cadastro do Eficaz: ${brl(p.preco)}${OLHO&&mgv!=null?` · margem na última venda <b>${mgv.toFixed(0)}%</b>`:''}${OLHO&&p.compra&&/\(com/.test(p.compra)?' · nota: '+esc(p.compra):''}</div>
       <div class="bts"><button type="button" class="btn sec sm" data-add="orcamento" data-i="${i}">+ Orçamento</button><button type="button" class="btn sec sm" data-add="venda" data-i="${i}">+ Venda</button></div></div>`; }).join('')||'<p class="vazio">Nada encontrado.</p>';
   $('p-lista').onclick=e=>{ const b=e.target.closest('[data-add]'); if(!b) return; const p=r[+b.dataset.i]; const orc=b.dataset.add==='orcamento'; const box=orc?$('o-itens'):$('v-itens'); const fn=orc?totO:totV;
     if(orc&&TELA!=='orcamento'&&!O_ED&&!$('o-cli').value&&!lerOrc().itens.length) abrirOrc();
