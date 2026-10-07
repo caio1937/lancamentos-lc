@@ -64,6 +64,9 @@ textarea{min-height:64px;resize:vertical}
 .msg.ok{background:var(--goodbg);color:var(--good)}.msg.err{background:var(--badbg);color:var(--bad)}.msg.info{background:var(--warnbg);color:var(--warn)}
 .editando{background:var(--warnbg);color:var(--warn);border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:650}
 .note{color:var(--ink3);font-size:12.5px}
+.databar{display:flex;align-items:center;gap:6px;margin:0 2px 10px;flex-wrap:wrap}.databar label{display:block;font-size:13px}.databar input{flex:1;min-width:140px;width:auto;padding:8px 10px;font-weight:600;font-size:15px}
+.databar button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 12px;font-weight:600;font-size:13px;color:var(--ink2)}.databar.outra input{border-color:#b7791f;background:#fff8e6;color:#7a4b00}
+.databar .dn{flex-basis:100%;font-size:12px;color:#7a4b00;font-weight:600}
 .chk{display:flex;gap:9px;align-items:center;color:var(--ink);font-weight:600}.chk input{width:22px;height:22px}
 /* navegação inferior */
 nav.baixo{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--panel);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:0 4px env(safe-area-inset-bottom,0);box-shadow:0 -4px 18px rgba(0,0,0,.06)}
@@ -120,7 +123,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
 .fotos .f img{width:100%;height:100%;object-fit:cover}
 .fotos .f button{position:absolute;top:3px;right:3px;border:0;border-radius:50%;width:26px;height:26px;background:rgba(0,0,0,.6);color:#fff;font-size:16px;line-height:1}
 .addfoto{border:1.5px dashed var(--accent);border-radius:10px;aspect-ratio:1;display:grid;place-items:center;text-align:center;color:var(--accent);font-weight:650;font-size:12.5px;background:var(--accentbg);cursor:pointer}
-.addfoto i{font-style:normal;font-size:24px;display:block}
+.addfoto i{font-style:normal;font-size:24px;display:block}.addfoto.gal{border-style:dotted}
 .kmbox{display:flex;align-items:center;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:0 12px}
 .kmbox:focus-within{border-color:var(--accent);background:var(--panel)}
 .kmpref{font:650 24px var(--num);color:var(--ink3);white-space:nowrap}
@@ -159,6 +162,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
   <!-- ================= VENDA ================= -->
   <form class="tela" id="t-venda" autocomplete="off" hidden>
     <div class="editando" id="v-editando" hidden></div>
+    <div class="databar" data-pre="v"><label for="v-data">📅 Data</label><input type="date" id="v-data" required><button type="button" data-d="0">Hoje</button><button type="button" data-d="-1">Ontem</button></div>
     <div class="card">
       <div class="campo-sug"><label>Cliente<input id="v-cli" placeholder="Nome do cliente ou empresa"></label></div>
       <div class="row"><label>Telefone<input id="v-tel" inputmode="tel"></label><label>Cidade / local<input id="v-loc" placeholder="Canoinhas"></label></div>
@@ -181,6 +185,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
   <!-- ================= GASTO ================= -->
   <form class="tela" id="t-gasto" autocomplete="off" hidden>
     <div class="editando" id="g-editando" hidden></div>
+    <div class="databar" data-pre="g"><label for="g-data">📅 Data</label><input type="date" id="g-data" required><button type="button" data-d="0">Hoje</button><button type="button" data-d="-1">Ontem</button></div>
     <div class="card">
       <div><div class="lbl">De quem é o gasto</div><div class="seg" id="g-nat"><button type="button" data-v="Empresa" aria-pressed="true">Empresa</button><button type="button" data-v="Pessoal" aria-pressed="false">Pessoal</button></div></div>
       <div><div class="lbl">Categoria</div><div class="seg" id="g-cat"></div></div>
@@ -198,6 +203,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
   <!-- ================= ABASTECIMENTO ================= -->
   <form class="tela" id="t-abastecer" autocomplete="off" hidden>
     <div class="editando" id="a-editando" hidden></div>
+    <div class="databar" data-pre="a"><label for="a-data">📅 Data</label><input type="date" id="a-data" required><button type="button" data-d="0">Hoje</button><button type="button" data-d="-1">Ontem</button></div>
     <div class="card">
       <div><div class="lbl">Veículo</div><div class="seg" id="a-veic"></div></div>
       <div class="ultkm" id="a-ult"></div>
@@ -221,6 +227,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
   <!-- ================= ORÇAMENTO ================= -->
   <form class="tela" id="t-orcamento" autocomplete="off" hidden>
     <div class="editando" id="o-editando" hidden></div>
+    <div class="databar" data-pre="o"><label for="o-data">📅 Data</label><input type="date" id="o-data" required><button type="button" data-d="0">Hoje</button><button type="button" data-d="-1">Ontem</button></div>
     <div class="card">
       <div class="campo-sug"><label>Cliente<input id="o-cli" placeholder="Nome do cliente ou empresa"></label></div>
       <div class="row"><label>Telefone<input id="o-tel" inputmode="tel"></label><label>Cidade / endereço<input id="o-loc" placeholder="Canoinhas"></label></div>
@@ -249,7 +256,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
       <div class="cliinfo" id="m-cli-info"></div>
       <label>Endereço / local<input id="m-loc" placeholder="vem do cadastro; pode mudar"></label>
       <label>Telefone / contato<input id="m-tel" inputmode="tel" placeholder="opcional"></label>
-      <div class="row"><label>Dia<input id="m-dia" type="date"></label><label>Período<select id="m-per"><option>Manhã</option><option>Tarde</option><option>Dia todo</option><option>Noite</option></select></label></div>
+      <div class="row"><label>📅 Dia<input id="m-dia" type="date"></label><label>Período<select id="m-per"><option>Manhã</option><option>Tarde</option><option>Dia todo</option><option>Noite</option></select></label></div>
       <label>Trabalho realizado<textarea id="m-desc" style="min-height:130px" placeholder="O que foi feito, equipamentos trocados, problemas encontrados, o que ficou pendente…"></textarea></label></div>
     <div class="card"><h3>Fotos</h3><div class="fotos" id="m-fotos"></div><p class="note" style="margin:0">As fotos ficam no celular até a internet voltar e depois vão para o Google Drive junto com a manutenção.</p></div>
     <div class="msg" id="m-msg" hidden></div>
@@ -312,8 +319,23 @@ const sa=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 const ler=(k,d)=>{ try{ const v=localStorage.getItem(k); return v==null?d:JSON.parse(v); }catch(e){ return d; } };
 const gravar=(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } };
 const hojeISO=()=>{ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+/* ---------- data do lançamento: sempre começa com hoje, dá para mudar ---------- */
+const diaLocal=iso=>{ const d=new Date(iso); if(isNaN(d)) return hojeISO(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+const somaDias=(iso,n)=>{ const d=new Date(iso+'T12:00:00'); d.setDate(d.getDate()+n); return diaLocal(d.toISOString()); };
+const campoData=pre=>$(pre==='m'?'m-dia':pre+'-data');
+function marcaData(pre){ const i=campoData(pre); const bar=i.closest('.databar'); if(!bar) return; const v=i.value, h=hojeISO();
+  bar.classList.toggle('outra',!!v&&v!==h); let dn=bar.querySelector('.dn');
+  const txt=!v?'':v>h?'Data no futuro — confira.':v!==h?`Lançamento com data de ${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)} (não é hoje).`:'';
+  if(txt&&!dn){ dn=document.createElement('div'); dn.className='dn'; bar.appendChild(dn); } if(dn){ dn.textContent=txt; dn.hidden=!txt; } }
+function poeData(pre,r){ const i=campoData(pre); i.value=r&&r.criado?diaLocal(r.criado):hojeISO(); marcaData(pre); }
+// criado a gravar: hoje → agora; outro dia → meio-dia daquele dia; na edição, sem mudar a data → mantém o horário original
+function criadoDe(pre,r){ const v=campoData(pre).value||hojeISO(); if(r&&r.criado&&v===diaLocal(r.criado)) return r.criado;
+  return v===hojeISO()?new Date().toISOString():new Date(v+'T12:00:00').toISOString(); }
+document.addEventListener('click',e=>{ const b=e.target.closest('.databar button[data-d]'); if(!b) return; const pre=b.closest('.databar').dataset.pre; campoData(pre).value=somaDias(hojeISO(),+b.dataset.d); marcaData(pre); });
+document.addEventListener('input',e=>{ const bar=e.target.closest&&e.target.closest('.databar'); if(bar) marcaData(bar.dataset.pre); });
 const dataBR=s=>{ if(!s) return ''; const d=new Date(s); return isNaN(d)?String(s):d.toLocaleDateString('pt-BR'); };
-const dataHora=s=>{ const d=new Date(s); return isNaN(d)?'':d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); };
+const dataHora=s=>{ const d=new Date(s); if(isNaN(d)) return ''; const so=d.getHours()===12&&!d.getMinutes()&&!d.getSeconds()&&!d.getMilliseconds();   // data escolhida (sem hora)
+  return so?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); };
 const diaBR=s=>s&&/^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4):dataBR(s);
 const CATS={Empresa:['Combustível Doblò','Manutenção Doblò','Peças / material','Ferramentas','Alimentação','Internet / telefone','Outros da empresa'],
             Pessoal:['Sítio / chácara','Mercado','Combustível Jeep','Farmácia','Casa','Animais','Outros pessoais']};
@@ -378,10 +400,10 @@ const regPorId=id=>registros().find(r=>r.id===id);
 function upsertSrv(r){ const i=SRV.findIndex(x=>String(x.id)===String(r.id)); if(i>=0) SRV[i]=r; else SRV.push(r); salvarSrv(); }
 
 /* operações */
-function opSalvar(dados,fotos){ const id=novoId(); const d={...dados,id,criado:new Date().toISOString(),quem:CFG.nome||''}; OPS.push({op:'salvar',id,dados:d,fotos:fotos||[]}); salvarOps(); depoisDeMudar(); return id; }
+function opSalvar(dados,fotos){ const id=novoId(); const d={...dados,id,criado:dados.criado||new Date().toISOString(),quem:CFG.nome||''}; OPS.push({op:'salvar',id,dados:d,fotos:fotos||[]}); salvarOps(); depoisDeMudar(); return id; }
 function opEditar(id,dados,fotos,remover){
   const pend=OPS.find(o=>o.op==='salvar'&&o.id===id);
-  if(pend){ pend.dados={...pend.dados,...dados,id,criado:pend.dados.criado,quem:pend.dados.quem}; pend.fotos=[...(pend.fotos||[]).filter(k=>!(remover||[]).includes(k)),...(fotos||[])]; }
+  if(pend){ pend.dados={...pend.dados,...dados,id,criado:dados.criado||pend.dados.criado,quem:pend.dados.quem}; pend.fotos=[...(pend.fotos||[]).filter(k=>!(remover||[]).includes(k)),...(fotos||[])]; }
   else OPS.push({op:'editar',id,dados,fotos:fotos||[],remover:remover||[]});
   salvarOps(); depoisDeMudar(); }
 function opCampos(id,campos){ const pend=OPS.find(o=>o.op==='salvar'&&o.id===id);
@@ -530,13 +552,13 @@ function abrirVenda(r,deOrc){ V_ED=r||null; V_ORC=''; V_MO=null; $('v-ult').hidd
   if(r){ $('v-cli').value=r.nome; $('v-tel').value=r.telefone; $('v-loc').value=r.local; segPor('v-emp',r.empresa); $('v-mo').value=vBR(r.mao_obra); $('v-mod').value=r.mao_obra_desc; $('v-pag').value=r.pagamento; $('v-pago').checked=r.pago; $('v-obs').value=r.obs; V_ORC=(r.extra||{}).orcamento||''; V_MO=(r.extra||{}).mao_obra||null; }
   if(deOrc){ const o=deOrc; $('v-cli').value=o.nome; $('v-tel').value=o.telefone; $('v-loc').value=o.local; segPor('v-emp',o.empresa); const mo=(o.extra.mao_obra||[]).reduce((s,i)=>s+i.qtd*i.valor,0); $('v-mo').value=vBR(mo);
     $('v-mod').value=(o.extra.mao_obra||[]).map(m=>(m.qtd>1?numBR(m.qtd)+' x ':'')+m.desc).join('; '); $('v-obs').value='Orçamento '+(o.extra.numero||'')+(o.extra.titulo?' — '+o.extra.titulo:''); V_ORC=o.extra.numero||''; V_MO=(o.extra.mao_obra||[]).length?JSON.parse(JSON.stringify(o.extra.mao_obra)):null; }
-  porItens($('v-itens'),r?r.itens:deOrc?deOrc.itens:[],totV); avisoEdicao('v-editando',r); $('v-salvar').textContent=r?'Salvar alterações':'Salvar venda';
+  porItens($('v-itens'),r?r.itens:deOrc?deOrc.itens:[],totV); avisoEdicao('v-editando',r); poeData('v',r); $('v-salvar').textContent=r?'Salvar alterações':'Salvar venda';
   TITULOS.venda=r?'Editar venda':'Nova venda'; ir('venda'); if(deOrc) msg('v-msg','Venda preenchida com o orçamento '+(deOrc.extra.numero||'')+'. Confira o pagamento e salve.','info'); }
 $('t-venda').addEventListener('submit',e=>{ e.preventDefault(); const v=lerVenda();
   if(!v.cliente){ msg('v-msg','Informe o cliente.','err'); return; } if(!v.itens.length&&!v.mao_obra){ msg('v-msg','Coloque um item ou a mão de obra.','err'); return; }
   v.extra={...(V_ED?V_ED.extra:{}),numero:(V_ED&&V_ED.extra.numero)||proxNumero('venda')}; if(V_ORC) v.extra.orcamento=V_ORC; else delete v.extra.orcamento;
   if(V_MO&&Math.abs(V_MO.reduce((s,i)=>s+i.qtd*i.valor,0)-v.mao_obra)<0.01) v.extra.mao_obra=V_MO; else delete v.extra.mao_obra; delete v.extra.alteracoes;
-  if(V_ED){ opEditar(V_ED.id,{...v,quem:CFG.nome}); ULT_VENDA=V_ED.id; } else ULT_VENDA=opSalvar(v);
+  v.criado=criadoDe('v',V_ED); if(V_ED){ opEditar(V_ED.id,{...v,quem:CFG.nome}); ULT_VENDA=V_ED.id; } else ULT_VENDA=opSalvar(v);
   msg('v-msg',(V_ED?'Alterações salvas':'Venda salva')+(navigator.onLine?'. Enviando…':' no celular; vai quando a internet voltar.'),navigator.onLine?'ok':'info');
   const r=regPorId(ULT_VENDA); abrirVenda(); $('v-ult-t').textContent=`Venda ${r.extra.numero} · ${r.nome} · ${brl(r.total)}`; $('v-ult').hidden=false; });
 $('v-ult-pdf').onclick=()=>{ const r=regPorId(ULT_VENDA); if(r) pdfVenda(r,'v-msg'); };
@@ -546,19 +568,24 @@ let G_ED=null, G_FOTO='';
 segClick('g-nat',true,()=>cats());
 function cats(sel){ const n=segVal('g-nat')||'Empresa'; $('g-cat').innerHTML=CATS[n].map(c=>`<button type="button" data-v="${esc(c)}" aria-pressed="${c===sel}">${esc(c)}</button>`).join(''); }
 segClick('g-cat',false,()=>{ const c=segVal('g-cat'); const v=veiculos().find(x=>x.categoria===c); $('g-dica').hidden=!v||!!G_ED; if(v) $('g-dica').dataset.v=v.nome; });
+/* ---------- foto: tirar na hora (câmera) ou escolher da galeria ---------- */
+function botoesFoto(pre,multi,rotulo){ return `<label class="addfoto"><span><i>📷</i>${rotulo||'Tirar foto'}</span><input type="file" accept="image/*" capture="environment" hidden id="${pre}-cam"></label>`+
+  `<label class="addfoto gal"><span><i>🖼️</i>Da galeria</span><input type="file" accept="image/*" ${multi?'multiple':''} hidden id="${pre}-gal"></label>`; }
+function ligarFotos(pre,fn){ [pre+'-cam',pre+'-gal'].forEach(id=>{ const i=$(id); if(i) i.onchange=async e=>{ const fs=[...e.target.files]; e.target.value=''; if(fs.length) await fn(fs); }; }); }
 function renderFotosGasto(){ const r=G_ED; const ex=r?[...(r.foto?[{url:r.foto,id:'_comp'}]:[]),...(r.fotos||[])]:[];
   $('g-fotos').innerHTML=ex.map(f=>`<a class="f" href="${esc(f.url)}" target="_blank" rel="noopener">${MINI[f.id]?`<img src="${MINI[f.id]}" alt="">`:'📷'}</a>`).join('')+
-    (G_FOTO?`<div class="f"><img src="${MINI[G_FOTO]||''}" alt=""><button type="button" data-rm="1" aria-label="Remover">×</button></div>`:`<label class="addfoto"><span><i>📷</i>${ex.length?'Mais uma':'Tirar / escolher'}</span><input type="file" accept="image/*" capture="environment" hidden id="g-foto"></label>`);
-  const inp=$('g-foto'); if(inp) inp.onchange=async e=>{ const f=e.target.files[0]; if(!f) return; G_FOTO=await guardarFoto(f); renderFotosGasto(); };
+    (G_FOTO?`<div class="f"><img src="${MINI[G_FOTO]||''}" alt=""><button type="button" data-rm="1" aria-label="Remover">×</button></div>`:botoesFoto('g',false,ex.length?'Tirar outra':'Tirar foto'));
+  ligarFotos('g',async fs=>{ G_FOTO=await guardarFoto(fs[0]); renderFotosGasto(); });
   const rm=$('g-fotos').querySelector('[data-rm]'); if(rm) rm.onclick=()=>{ IDB.del(G_FOTO).catch(()=>{}); G_FOTO=''; renderFotosGasto(); }; }
 $('g-dica').onclick=()=>abrirAbast(null,{veiculo:$('g-dica').dataset.v,valor:num($('g-val').value)});
 function abrirGasto(r){ G_ED=r||null; G_FOTO=''; $('g-msg').hidden=true; $('g-dica').hidden=true;
   segPor('g-nat',r?r.natureza||'Empresa':'Empresa'); cats(r?r.categoria:''); $('g-desc').value=r?r.nome:''; $('g-val').value=r?vBR(r.total):''; $('g-pag').value=r?r.pagamento:''; $('g-pago').checked=r?r.pago:true; $('g-obs').value=r?r.obs:'';
-  renderFotosGasto(); avisoEdicao('g-editando',r); $('g-salvar').textContent=r?'Salvar alterações':'Salvar gasto'; TITULOS.gasto=r?'Editar gasto':'Novo gasto'; ir('gasto'); }
+  renderFotosGasto(); avisoEdicao('g-editando',r); poeData('g',r); $('g-salvar').textContent=r?'Salvar alterações':'Salvar gasto'; TITULOS.gasto=r?'Editar gasto':'Novo gasto'; ir('gasto'); }
 $('t-gasto').addEventListener('submit',e=>{ e.preventDefault();
   const g={tipo:'gasto',natureza:segVal('g-nat')||'Empresa',categoria:segVal('g-cat'),descricao:$('g-desc').value.trim(),valor:num($('g-val').value),pagamento:$('g-pag').value,pago:$('g-pago').checked,obs:$('g-obs').value.trim()};
   if(!g.valor){ msg('g-msg','Informe o valor.','err'); return; } if(!g.categoria&&!g.descricao){ msg('g-msg','Escolha a categoria ou escreva a descrição.','err'); return; }
   if(!g.descricao) g.descricao=g.categoria;
+  g.criado=criadoDe('g',G_ED);
   if(G_ED){ g.extra={...G_ED.extra}; opEditar(G_ED.id,{...g,quem:CFG.nome},G_FOTO?[G_FOTO]:[]); }
   else { if(G_FOTO) g.fotoKey=G_FOTO; opSalvar(g); }
   const ed=!!G_ED; abrirGasto(); msg('g-msg',(ed?'Alterações salvas':'Gasto salvo')+(navigator.onLine?'.':' no celular; vai quando a internet voltar.'),navigator.onLine?'ok':'info'); });
@@ -613,8 +640,8 @@ function atualizaAbast(){ const u=ultimoKm(A_VEIC,A_ED&&A_ED.id); const M=medias
 ['a-km','a-lit','a-val'].forEach(i=>$(i).addEventListener('input',atualizaAbast)); $('a-res').onchange=atualizaAbast;
 function renderFotoAbast(){ const r=A_ED; const ex=r?[...(r.foto?[{url:r.foto,id:'_comp'}]:[]),...(r.fotos||[])]:[];
   $('a-fotos').innerHTML=ex.map(f=>`<a class="f" href="${esc(f.url)}" target="_blank" rel="noopener">${MINI[f.id]?`<img src="${MINI[f.id]}" alt="">`:'📷'}</a>`).join('')+
-    (A_FOTO?`<div class="f"><img src="${MINI[A_FOTO]||''}" alt=""><button type="button" data-rm="1" aria-label="Remover">×</button></div>`:`<label class="addfoto"><span><i>📷</i>${ex.length?'Mais uma':'Tirar / escolher'}</span><input type="file" accept="image/*" capture="environment" hidden id="a-foto"></label>`);
-  const inp=$('a-foto'); if(inp) inp.onchange=async e=>{ const f=e.target.files[0]; if(!f) return; A_FOTO=await guardarFoto(f); renderFotoAbast(); };
+    (A_FOTO?`<div class="f"><img src="${MINI[A_FOTO]||''}" alt=""><button type="button" data-rm="1" aria-label="Remover">×</button></div>`:botoesFoto('a',false,ex.length?'Tirar outra':'Tirar foto'));
+  ligarFotos('a',async fs=>{ A_FOTO=await guardarFoto(fs[0]); renderFotoAbast(); });
   const rm=$('a-fotos').querySelector('[data-rm]'); if(rm) rm.onclick=()=>{ IDB.del(A_FOTO).catch(()=>{}); A_FOTO=''; renderFotoAbast(); }; }
 function abrirAbast(r,pre){ A_ED=r||null; A_FOTO=''; $('a-msg').hidden=true; const ex=r?r.extra||{}:{};
   A_VEIC=ex.veiculo||(pre&&pre.veiculo)||A_VEIC||veiculos()[0].nome; renderVeic();
@@ -622,7 +649,7 @@ function abrirAbast(r,pre){ A_ED=r||null; A_FOTO=''; $('a-msg').hidden=true; con
   $('a-res').checked=r?naReserva(ex):true; $('a-posto').value=r&&r.nome!==r.categoria?r.nome:''; $('a-pag').value=r?r.pagamento:''; $('a-pago').checked=r?r.pago:true; $('a-obs').value=r?r.obs:'';
   const postos=[...new Set(registros().filter(ehAbast).map(x=>x.nome).filter(n=>n&&!veiculos().some(v=>v.categoria===n)))].slice(0,30);
   $('dl-postos').innerHTML=postos.map(p=>`<option value="${esc(p)}">`).join('');
-  renderFotoAbast(); avisoEdicao('a-editando',r); $('a-salvar').textContent=r?'Salvar alterações':'Salvar abastecimento'; TITULOS.abastecer=r?'Editar abastecimento':'Abastecimento';
+  renderFotoAbast(); avisoEdicao('a-editando',r); poeData('a',r); $('a-salvar').textContent=r?'Salvar alterações':'Salvar abastecimento'; TITULOS.abastecer=r?'Editar abastecimento':'Abastecimento';
   ir('abastecer'); atualizaAbast(); if(!r) setTimeout(()=>$('a-km').focus(),200); }
 $('t-abastecer').addEventListener('submit',e=>{ e.preventDefault(); const v=veicSel(); const u=ultimoKm(v.nome,A_ED&&A_ED.id);
   const km=kmCompleto($('a-km').value,u?u.km:null), lit=num($('a-lit').value), val=num($('a-val').value);
@@ -632,6 +659,7 @@ $('t-abastecer').addEventListener('submit',e=>{ e.preventDefault(); const v=veic
   const g={tipo:'gasto',natureza:v.natureza,categoria:v.categoria,descricao:posto||v.categoria,valor:val,pagamento:$('a-pag').value,pago:$('a-pago').checked,obs:$('a-obs').value.trim(),
     extra:{...(A_ED?A_ED.extra:{}),veiculo:v.nome,km,litros:lit,preco_litro:Math.round(val/lit*1000)/1000,reserva:$('a-res').checked}};
   delete g.extra.alteracoes; delete g.extra.tanque_cheio;
+  g.criado=criadoDe('a',A_ED);
   if(A_ED) opEditar(A_ED.id,{...g,quem:CFG.nome},A_FOTO?[A_FOTO]:[]); else { if(A_FOTO) g.fotoKey=A_FOTO; opSalvar(g); }
   const ed=!!A_ED; abrirAbast(); msg('a-msg',`${ed?'Alterações salvas':'Abastecimento salvo'}: ${kmBR(km)} km, ${litBR(lit)} L, ${brl(val)}`+(navigator.onLine?'.':' (vai quando a internet voltar).'),navigator.onLine?'ok':'info'); });
 
@@ -659,11 +687,12 @@ function abrirOrc(r,copia){ O_ED=copia?null:(r||null); $('o-msg').hidden=true;
   const base=r?{cliente:r.nome,telefone:r.telefone,local:r.local,empresa:r.empresa,itens:r.itens,mo:(r.extra||{}).mao_obra||[],titulo:(r.extra||{}).titulo||'',obs:r.obs,condicoes:(r.extra||{}).condicoes||'',validade:(r.extra||{}).validade??7}:(ler(RASC_K,null)||{});
   $('o-cli').value=base.cliente||''; $('o-tel').value=base.telefone||''; $('o-loc').value=base.local||''; $('o-tit').value=base.titulo||''; $('o-obs').value=base.obs||''; $('o-cond').value=base.condicoes||''; $('o-val').value=base.validade??7;
   renderOrcEmp(base.empresa||'Marilete'); porItens($('o-itens'),base.itens||[],totO); porMO($('o-mo'),base.mo||[],totO); totO();
-  avisoEdicao('o-editando',O_ED); TITULOS.orcamento=O_ED?'Editar orçamento '+(O_ED.extra.numero||''):copia?'Cópia de orçamento':'Novo orçamento'; ir('orcamento'); }
+  avisoEdicao('o-editando',O_ED); poeData('o',O_ED); TITULOS.orcamento=O_ED?'Editar orçamento '+(O_ED.extra.numero||''):copia?'Cópia de orçamento':'Novo orçamento'; ir('orcamento'); }
 function salvarOrc(){ const o=lerOrc(); if(!o.cliente){ msg('o-msg','Informe o cliente.','err'); return null; } if(!o.itens.length&&!o.mo.length){ msg('o-msg','Coloque ao menos um material ou serviço.','err'); return null; }
   const emp=empresaDe(o.empresa); const mo=o.mo.reduce((s,i)=>s+i.qtd*i.valor,0);
   const extra={...(O_ED?O_ED.extra:{}),numero:(O_ED&&O_ED.extra.numero)||proxNumero('orc'),titulo:o.titulo,mao_obra:o.mo,condicoes:o.condicoes,validade:o.validade,empresa_razao:emp.razao||o.empresa}; delete extra.alteracoes;
   const d={tipo:'orcamento',cliente:o.cliente,telefone:o.telefone,local:o.local,empresa:o.empresa,itens:o.itens,mao_obra:mo,mao_obra_desc:o.mo.map(m=>m.desc).join('; '),obs:o.obs,extra};
+  d.criado=criadoDe('o',O_ED);
   let id; if(O_ED){ opEditar(O_ED.id,{...d,quem:CFG.nome}); id=O_ED.id; } else { id=opSalvar(d); gravar(RASC_K,null); }
   O_ED=regPorId(id); avisoEdicao('o-editando',O_ED); TITULOS.orcamento='Editar orçamento '+extra.numero; $('titulo').textContent=TITULOS.orcamento; return O_ED; }
 $('o-salvar').onclick=()=>{ const r=salvarOrc(); if(r) msg('o-msg','Orçamento '+r.extra.numero+' salvo'+(navigator.onLine?'.':' no celular (vai para a planilha quando a internet voltar).'),'ok'); };
@@ -681,8 +710,8 @@ $('m-cli').addEventListener('input',()=>{ if(M_AUTO&&sa($('m-cli').value)!==sa(M
 function renderFotosMan(){ const ex=(M_ED?M_ED.fotos||[]:[]).filter(f=>!M_REMOVER.includes(f.id));
   $('m-fotos').innerHTML=ex.map(f=>`<div class="f"><a href="${esc(f.url)}" target="_blank" rel="noopener" style="display:contents">${MINI[f.id]?`<img src="${MINI[f.id]}" alt="">`:'📷'}</a><button type="button" data-rmx="${esc(f.id)}" aria-label="Remover">×</button></div>`).join('')+
     M_NOVAS.map(k=>`<div class="f"><img src="${MINI[k]||''}" alt=""><button type="button" data-rmn="${esc(k)}" aria-label="Remover">×</button></div>`).join('')+
-    `<label class="addfoto"><span><i>📷</i>Adicionar fotos</span><input type="file" accept="image/*" multiple hidden id="m-foto"></label>`;
-  $('m-foto').onchange=async e=>{ const fs=[...e.target.files]; for(const f of fs){ try{ M_NOVAS.push(await guardarFoto(f)); }catch(err){} } renderFotosMan(); };
+    botoesFoto('m',true,(ex.length+M_NOVAS.length)?'Tirar mais uma':'Tirar foto');
+  ligarFotos('m',async fs=>{ for(const f of fs){ try{ M_NOVAS.push(await guardarFoto(f)); }catch(err){} } renderFotosMan(); });
   $('m-fotos').querySelectorAll('[data-rmx]').forEach(b=>b.onclick=()=>{ M_REMOVER.push(b.dataset.rmx); renderFotosMan(); });
   $('m-fotos').querySelectorAll('[data-rmn]').forEach(b=>b.onclick=()=>{ IDB.del(b.dataset.rmn).catch(()=>{}); M_NOVAS=M_NOVAS.filter(k=>k!==b.dataset.rmn); renderFotosMan(); }); }
 function abrirMan(r){ M_ED=r||null; M_AUTO=null; M_NOVAS=[]; M_REMOVER=[]; $('m-msg').hidden=true; const ex=r?r.extra||{}:{};
@@ -692,6 +721,7 @@ $('t-manutencao').addEventListener('submit',e=>{ e.preventDefault();
   const d={tipo:'manutencao',cliente:$('m-cli').value.trim(),local:$('m-loc').value.trim(),telefone:$('m-tel').value.trim(),extra:{...(M_ED?M_ED.extra:{}),data:$('m-dia').value,periodo:$('m-per').value,descricao:$('m-desc').value.trim(),cliente_eficaz:doEficaz($('m-cli').value.trim())}};
   delete d.extra.alteracoes;
   if(!d.cliente){ msg('m-msg','Informe a empresa.','err'); return; } if(!d.extra.descricao){ msg('m-msg','Descreva o trabalho realizado.','err'); return; }
+  if(!d.extra.data) d.extra.data=hojeISO(); d.criado=criadoDe('m',M_ED);
   if(M_ED) opEditar(M_ED.id,{...d,quem:CFG.nome},M_NOVAS,M_REMOVER); else opSalvar(d,M_NOVAS);
   const ed=!!M_ED, n=M_NOVAS.length; abrirMan(); msg('m-msg',(ed?'Alterações salvas':'Manutenção salva')+(n?` com ${n} foto(s)`:'')+(navigator.onLine?'. Enviando…':' no celular; vai quando a internet voltar.'),navigator.onLine?'ok':'info'); });
 
