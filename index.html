@@ -113,6 +113,8 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
 .prod{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--panel);display:grid;gap:4px}
 .prod .t{display:flex;justify-content:space-between;gap:10px;align-items:baseline}.prod .t b{font-size:14.5px;font-weight:650}
 .prod .p{font:650 17px var(--num);white-space:nowrap;color:var(--accent)}
+.prod .precos{display:grid;grid-template-columns:1fr 1fr;gap:8px}.prod .precos>div{background:var(--soft);border-radius:8px;padding:6px 9px;display:grid;gap:1px}.prod .precos span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.03em}.prod .precos b{font-family:var(--num);font-size:16px}.prod .precos small{font-size:11.5px;color:var(--ink2)}.prod .precos .cmp{background:transparent;border:1px dashed var(--line)}
+.item .cod .usar{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:2px;color:var(--accent)}.sug small .uv{font-style:normal;color:var(--accent);font-weight:600}
 .prod .c{font-size:12.5px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:6px 9px}.prod .c b{font-family:var(--num)}
 .olho{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:20px;padding:6px 11px;font-size:13px;font-weight:700;white-space:nowrap}
 .olho[aria-pressed="true"]{background:#f7c46c;color:#3b2a06;border-color:#f7c46c}
@@ -336,6 +338,7 @@ document.addEventListener('input',e=>{ const bar=e.target.closest&&e.target.clos
 const dataBR=s=>{ if(!s) return ''; const d=new Date(s); return isNaN(d)?String(s):d.toLocaleDateString('pt-BR'); };
 const dataHora=s=>{ const d=new Date(s); if(isNaN(d)) return ''; const so=d.getHours()===12&&!d.getMinutes()&&!d.getSeconds()&&!d.getMilliseconds();   // data escolhida (sem hora)
   return so?d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}):d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}); };
+const diaCurto=s=>s&&/^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(2,4):'';
 const diaBR=s=>s&&/^\d{4}-\d{2}-\d{2}/.test(s)?s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4):dataBR(s);
 const CATS={Empresa:['Combustível Doblò','Manutenção Doblò','Peças / material','Ferramentas','Alimentação','Internet / telefone','Outros da empresa'],
             Pessoal:['Sítio / chácara','Mercado','Combustível Jeep','Manutenção Jeep','Farmácia','Casa','Animais','Outros pessoais']};
@@ -463,7 +466,7 @@ $('alerta-x').onclick=()=>$('alerta').hidden=true; $('aviso-x').onclick=()=>$('a
 let CAT=ler('lc-cat',null), PRODS=[], SERV=[], CLIS=[];
 function prepararCat(){ PRODS=[]; SERV=[]; CLIS=[]; if(!CAT) return;
   const ix={}; (CAT.campos||[]).forEach((c,i)=>ix[c]=i);
-  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',codfab:r[ix.codfab]||''};
+  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',uvp:ix.ult_venda_preco!=null?r[ix.ult_venda_preco]:null,codfab:r[ix.codfab]||''};
     p.k=sa(p.nome+' '+p.codfab+' '+p.cod+' '+p.grupo); return p; });
   SERV=(CAT.servicos||[]).map(s=>({desc:s[0],valor:s[1]}));
   CLIS=(CAT.clientes||[]).map(c=>({nome:c[0],fone:c[1]||'',cidade:c[2]||'',endereco:c[3]||'',k:sa(c[0]+' '+(c[4]||''))}));
@@ -493,13 +496,17 @@ function ligarCliente(inp,aoEscolher){ const caixa=inp.closest('.campo-sug');
 function ligarBusca(row,aoEscolher){ const inp=row.querySelector('input');
   inp.addEventListener('input',()=>{ fecharSug(); delete row.dataset.cod; const c=row.querySelector('.cod'); if(c) c.remove();
     if(inp.value.trim().length<2||!PRODS.length) return; const r=buscar(inp.value,'',8); if(!r.length) return;
-    mostrarSug(row,r.map((p,i)=>`<button type="button" data-i="${i}"><b>${esc(p.nome)}</b><span>${brl(p.preco)}</span><small>por ${esc(unN(p.un))} · cód. ${esc(p.cod)}${p.estoque?` · estoque ${numBR(p.estoque)}`:''}${OLHO&&p.cu?` · compra ${brl(p.cu)}`:''}</small></button>`).join(''),i=>aoEscolher(row,r[i])); });
+    mostrarSug(row,r.map((p,i)=>`<button type="button" data-i="${i}"><b>${esc(p.nome)}</b><span>${brl(p.preco)}</span><small>${p.uvp?`<em class="uv">última venda ${brl(p.uvp)} em ${diaCurto(p.uv)}</em> · `:'sem venda registrada · '}por ${esc(unN(p.un))} · cód. ${esc(p.cod)}${p.estoque?` · estoque ${numBR(p.estoque)}`:''}</small></button>`).join(''),i=>aoEscolher(row,r[i])); });
   inp.addEventListener('blur',()=>setTimeout(()=>fecharSug(row),150)); }
 document.addEventListener('click',e=>{ if(SUG&&!e.target.closest('.sug')&&!e.target.closest('.item')&&!e.target.closest('.campo-sug')) fecharSug(); });
 
 /* linhas de item e de mão de obra */
 function preencherItem(row,p,qtd){ const i=row.querySelectorAll('input'); i[0].value=p.nome; if(qtd) i[1].value=String(qtd).replace('.',','); else if(!i[1].value) i[1].value='1'; i[2].value=vBR(p.preco);
-  row.dataset.cod=p.cod; row.dataset.un=p.un; let c=row.querySelector('.cod'); if(!c){ c=document.createElement('div'); c.className='cod'; row.appendChild(c); } c.textContent=`cód. ${p.cod} · preço por ${unN(p.un)}`; row.dispatchEvent(new Event('input',{bubbles:true})); }
+  row.dataset.cod=p.cod; row.dataset.un=p.un; let c=row.querySelector('.cod'); if(!c){ c=document.createElement('div'); c.className='cod'; row.appendChild(c); }
+  const dif=p.uvp&&Math.abs(p.uvp-p.preco)>=0.01;
+  c.innerHTML=`cód. ${esc(p.cod)} · por ${esc(unN(p.un))} · cadastro ${brl(p.preco)}${p.uvp?` · <b>última venda ${brl(p.uvp)}</b> em ${diaCurto(p.uv)}${dif?` <button type="button" class="usar" data-v="${p.uvp}">usar</button> <button type="button" class="usar" data-v="${p.preco}">cadastro</button>`:''}`:' · sem venda registrada'}`;
+  c.querySelectorAll('.usar').forEach(b=>b.onclick=()=>{ i[2].value=vBR(+b.dataset.v); row.dispatchEvent(new Event('input',{bubbles:true})); });
+  row.dispatchEvent(new Event('input',{bubbles:true})); }
 function linhaItem(box,aoMudar){ const d=document.createElement('div'); d.className='item';
   d.innerHTML='<input placeholder="descrição ou busca" aria-label="Descrição"><input inputmode="decimal" placeholder="1" aria-label="Quantidade"><input inputmode="decimal" placeholder="0,00" aria-label="Valor unitário"><button type="button" class="x" aria-label="Remover">×</button>';
   d.querySelector('.x').onclick=()=>{ d.remove(); if(!box.children.length) box.appendChild(linhaItem(box,aoMudar)); aoMudar(); }; d.oninput=aoMudar;
@@ -733,8 +740,9 @@ function pdfOrc(r,box){ try{ PDF.orcamento(orcParaPdf(r),empresaDe(r.empresa)); 
 function pdfVenda(r,box){ try{ PDF.venda(vendaParaPdf(r),empresaDe(r.empresa)); }catch(e){ if(box) msg(box,'Não consegui gerar o PDF: '+e.message,'err'); else alert(e.message); } }
 
 /* ======================= PRODUTOS ======================= */
-let OLHO=false, P_GRP='';
-$('p-olho').onclick=()=>{ OLHO=!OLHO; $('p-olho').setAttribute('aria-pressed',String(OLHO)); renderProd(); };
+let OLHO=ler('lc-olho',true), P_GRP='';
+$('p-olho').setAttribute('aria-pressed',String(OLHO));
+$('p-olho').onclick=()=>{ OLHO=!OLHO; gravar('lc-olho',OLHO); $('p-olho').setAttribute('aria-pressed',String(OLHO)); renderProd(); };
 let tq=null; $('p-q').oninput=()=>{ clearTimeout(tq); tq=setTimeout(renderProd,120); };
 $('p-grp').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; P_GRP=P_GRP===b.dataset.v?'':b.dataset.v; renderProd(); };
 function renderProd(){
@@ -743,11 +751,14 @@ function renderProd(){
   $('p-grp').innerHTML=grupos.map(g=>`<button type="button" data-v="${esc(g)}" aria-pressed="${g===P_GRP}">${esc(g)}</button>`).join('');
   const q=$('p-q').value; const r=buscar(q,P_GRP,60);
   if(!PRODS.length){ $('p-lista').innerHTML=''; return; }
-  if(!q.trim()&&!P_GRP){ $('p-lista').innerHTML='<p class="vazio">Digite parte do nome, o código ou escolha um grupo.<br>O botão 👁 Compra (no topo) mostra o preço de compra; fica escondido para poder mostrar a tela ao cliente.</p>'; return; }
+  if(!q.trim()&&!P_GRP){ $('p-lista').innerHTML='<p class="vazio">Digite parte do nome, o código ou escolha um grupo.<br>Aparecem o preço do cadastro, a última venda e a última compra. Para mostrar a tela ao cliente, toque em 👁 Compra (no topo) e o preço de compra some.</p>'; return; }
   $('p-lista').innerHTML=r.map((p,i)=>{ const mg=p.cu&&p.preco?(p.preco-p.cu)/p.preco*100:null;
+    const cqD=(p.cq||'').split(' ')[0], cqF=(p.cq||'').split(' ').slice(1).join(' '); const mgv=p.cu&&p.uvp?(p.uvp-p.cu)/p.uvp*100:null;
     return `<div class="prod"><div class="t"><b>${esc(p.nome)}</b><span class="p">${brl(p.preco)}</span></div>
-      <div class="note">cód. ${esc(p.cod)}${p.codfab?' · ref. '+esc(p.codfab):''} · por ${esc(unN(p.un))}${p.estoque?` · estoque ${numBR(p.estoque)}`:' · sem estoque'}${p.uv?` · última venda ${diaBR(p.uv)}`:''}</div>
-      ${OLHO?(p.cu?`<div class="c">Compra: <b>${brl(p.cu)}</b> por ${esc(unN(p.un))}${mg!=null?` · margem <b>${mg.toFixed(0)}%</b>`:''}<br>${p.compra&&/\(com/.test(p.compra)?'última nota: '+esc(p.compra)+' · ':''}${p.cq?esc(p.cq):esc(p.compra||'')}</div>`:'<div class="c">Sem compra registrada no Eficaz.</div>'):''}
+      <div class="note">cód. ${esc(p.cod)}${p.codfab?' · ref. '+esc(p.codfab):''} · por ${esc(unN(p.un))}${p.estoque?` · estoque ${numBR(p.estoque)}`:' · sem estoque'} · preço do cadastro</div>
+      <div class="precos"><div><span>Última venda</span>${p.uvp?`<b>${brl(p.uvp)}</b><small>em ${diaCurto(p.uv)}</small>`:'<small>sem venda registrada</small>'}</div>
+      ${OLHO?`<div class="cmp"><span>Última compra</span>${p.cu?`<b>${brl(p.cu)}</b><small>${cqD?'em '+esc(cqD):''}${cqF?' · '+esc(cqF):''}</small>`:'<small>sem compra registrada</small>'}</div>`:''}</div>
+      ${OLHO&&p.cu?`<div class="note">Margem: ${mg!=null?`<b>${mg.toFixed(0)}%</b> no preço do cadastro`:''}${mgv!=null?` · <b>${mgv.toFixed(0)}%</b> na última venda`:''}${p.compra&&/\(com/.test(p.compra)?' · nota: '+esc(p.compra):''}</div>`:''}
       <div class="bts"><button type="button" class="btn sec sm" data-add="orcamento" data-i="${i}">+ Orçamento</button><button type="button" class="btn sec sm" data-add="venda" data-i="${i}">+ Venda</button></div></div>`; }).join('')||'<p class="vazio">Nada encontrado.</p>';
   $('p-lista').onclick=e=>{ const b=e.target.closest('[data-add]'); if(!b) return; const p=r[+b.dataset.i]; const orc=b.dataset.add==='orcamento'; const box=orc?$('o-itens'):$('v-itens'); const fn=orc?totO:totV;
     if(orc&&TELA!=='orcamento'&&!O_ED&&!$('o-cli').value&&!lerOrc().itens.length) abrirOrc();
