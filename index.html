@@ -115,6 +115,8 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
 .prod .p{font:650 17px var(--num);white-space:nowrap;color:var(--accent)}
 .prod .precos{display:grid;grid-template-columns:1fr 1fr;gap:8px}.prod .precos>div{background:var(--soft);border-radius:8px;padding:6px 9px;display:grid;gap:1px}.prod .precos span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.03em}.prod .precos b{font-family:var(--num);font-size:16px}.prod .precos small{font-size:11.5px;color:var(--ink2)}.prod .precos .cmp{background:transparent;border:1px dashed var(--line)}
 .prod .vh{display:grid;gap:2px;font-size:12.5px}.prod .vh>span{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.03em}.prod .vh>div{display:grid;grid-template-columns:86px 62px 1fr;gap:6px;align-items:baseline}.prod .vh b{font-family:var(--num)}.prod .vh em{font-style:normal;color:var(--ink2)}.prod .vh i{font-style:normal;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ordem{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--ink3)}.ordem .seg button{padding:5px 10px;font-size:12.5px}
+.prod .vh .forn{font-weight:600;color:var(--ink);font-family:inherit}.prod .precos .forn{font-weight:600;color:var(--ink);font-family:inherit;font-size:inherit}
 .item .cod .alt{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}.item .cod .usar{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:1px 8px;font-size:11px;margin-left:2px;color:var(--accent)}.sug small .uv{font-style:normal;color:var(--accent);font-weight:600}
 .prod .c{font-size:12.5px;color:var(--ink2);background:var(--soft);border-radius:8px;padding:6px 9px}.prod .c b{font-family:var(--num)}
 .olho{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:20px;padding:6px 11px;font-size:13px;font-weight:700;white-space:nowrap}
@@ -271,6 +273,7 @@ nav.baixo .mais i{width:56px;height:56px;border-radius:50%;background:var(--acce
     <div class="card" style="gap:10px">
       <input id="p-q" type="search" placeholder="Buscar: câmera 1220, cabo utp, fonte 12v…" autocomplete="off" aria-label="Buscar produto">
       <div class="seg rola" id="p-grp"></div>
+      <div class="ordem"><span>Ordenar por</span><div class="seg" id="p-ord"><button type="button" data-v="compra">Compra mais recente</button><button type="button" data-v="venda">Venda mais recente</button><button type="button" data-v="nome">Nome</button></div></div>
       <p class="note" style="margin:0" id="p-info"></p></div>
     <div id="p-lista" style="display:grid;gap:8px"></div>
   </section>
@@ -467,15 +470,17 @@ $('alerta-x').onclick=()=>$('alerta').hidden=true; $('aviso-x').onclick=()=>$('a
 let CAT=ler('lc-cat',null), PRODS=[], SERV=[], CLIS=[];
 function prepararCat(){ PRODS=[]; SERV=[]; CLIS=[]; if(!CAT) return;
   const ix={}; (CAT.campos||[]).forEach((c,i)=>ix[c]=i);
-  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',uvp:ix.ult_venda_preco!=null?r[ix.ult_venda_preco]:null,vh:ix.vendas!=null?(r[ix.vendas]||[]):[],codfab:r[ix.codfab]||''}; p.pv=p.uvp||p.preco;   // preço de venda = o último cobrado de um cliente no Eficaz (sem venda: o do cadastro)
+  PRODS=(CAT.produtos||[]).map(r=>{ const p={cod:r[ix.cod],nome:r[ix.nome],grupo:r[ix.grupo],un:r[ix.un],preco:r[ix.preco],estoque:r[ix.estoque],cu:r[ix.custo_un],compra:r[ix.compra],cq:r[ix.compra_quando],uv:r[ix.ult_venda]||'',uvp:ix.ult_venda_preco!=null?r[ix.ult_venda_preco]:null,vh:ix.vendas!=null?(r[ix.vendas]||[]):[],ch:ix.compras!=null?(r[ix.compras]||[]):[],uc:ix.ult_compra!=null?(r[ix.ult_compra]||''):'',codfab:r[ix.codfab]||''}; p.pv=p.uvp||p.preco;   // preço de venda = o último cobrado de um cliente no Eficaz (sem venda: o do cadastro)
     p.k=sa(p.nome+' '+p.codfab+' '+p.cod+' '+p.grupo); return p; });
   SERV=(CAT.servicos||[]).map(s=>({desc:s[0],valor:s[1]}));
   CLIS=(CAT.clientes||[]).map(c=>({nome:c[0],fone:c[1]||'',cidade:c[2]||'',endereco:c[3]||'',k:sa(c[0]+' '+(c[4]||''))}));
   $('dl-serv').innerHTML=SERV.map(s=>`<option value="${esc(s.desc)}">`).join(''); }
 prepararCat();
-function buscar(q,grupo,lim){ const ts=sa(q).split(/\s+/).filter(Boolean); if(!ts.length&&!grupo) return [];
+// ordem: 'compra' = comprado mais recentemente primeiro (padrão), 'venda' = vendido mais recentemente, 'nome'
+function buscar(q,grupo,lim,ordem){ const ts=sa(q).split(/\s+/).filter(Boolean); if(!ts.length&&!grupo) return [];
   const r=PRODS.filter(p=>(!grupo||p.grupo===grupo)&&ts.every(t=>p.k.includes(t)));
-  r.sort((a,b)=>((b.k.startsWith(ts[0]||'')?1:0)-(a.k.startsWith(ts[0]||'')?1:0))||(b.uv>a.uv?1:b.uv<a.uv?-1:0)||a.nome.localeCompare(b.nome));
+  const o=ordem||'compra', cmp=(x,y)=>(y>x?1:y<x?-1:0);
+  r.sort((a,b)=>o==='nome'?a.nome.localeCompare(b.nome):(o==='venda'?cmp(a.uv,b.uv)||cmp(a.uc,b.uc):cmp(a.uc,b.uc)||cmp(a.uv,b.uv))||a.nome.localeCompare(b.nome));
   return r.slice(0,lim||40); }
 async function baixarCatalogo(forcar){ if(!CFG.url||!navigator.onLine) return;
   try{ const r=await (await fetch(apiUrl('api=catalogo&v='+(forcar?'':(CAT&&CAT.versao)||'')))).json();
@@ -746,12 +751,15 @@ let OLHO=ler('lc-olho',true), P_GRP='';
 $('p-olho').setAttribute('aria-pressed',String(OLHO));
 $('p-olho').onclick=()=>{ OLHO=!OLHO; gravar('lc-olho',OLHO); $('p-olho').setAttribute('aria-pressed',String(OLHO)); renderProd(); };
 let tq=null; $('p-q').oninput=()=>{ clearTimeout(tq); tq=setTimeout(renderProd,120); };
+let P_ORD=ler('lc-pord','compra');
+$('p-ord').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; P_ORD=b.dataset.v; gravar('lc-pord',P_ORD); renderProd(); };
 $('p-grp').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; P_GRP=P_GRP===b.dataset.v?'':b.dataset.v; renderProd(); };
 function renderProd(){
   $('p-info').textContent=CAT&&CAT.produtos?`${PRODS.length.toLocaleString('pt-BR')} produtos · preços do backup de ${CAT.dados_ate?diaBR(CAT.dados_ate):'—'}`:'Ainda sem catálogo: abra o LC no PC (Início → Do celular) para enviar os produtos, depois toque em ↻ Atualizar no Início.';
   const grupos=[...new Set(PRODS.map(p=>p.grupo).filter(Boolean))].sort((a,b)=>a==='Outros'?1:b==='Outros'?-1:a.localeCompare(b));
   $('p-grp').innerHTML=grupos.map(g=>`<button type="button" data-v="${esc(g)}" aria-pressed="${g===P_GRP}">${esc(g)}</button>`).join('');
-  const q=$('p-q').value; const r=buscar(q,P_GRP,60);
+  $('p-ord').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===P_ORD)));
+  const q=$('p-q').value; const r=buscar(q,P_GRP,60,P_ORD);
   if(!PRODS.length){ $('p-lista').innerHTML=''; return; }
   if(!q.trim()&&!P_GRP){ $('p-lista').innerHTML='<p class="vazio">Digite parte do nome, o código ou escolha um grupo.<br>O preço em destaque é o da última venda a um cliente no Eficaz (sem venda, o do cadastro). Aparecem também as 3 últimas vendas e a última compra. Para mostrar a tela ao cliente, toque em 👁 Compra (no topo): somem a compra e os nomes e preços de outros clientes.</p>'; return; }
   $('p-lista').innerHTML=r.map((p,i)=>{
@@ -759,7 +767,8 @@ function renderProd(){
     return `<div class="prod"><div class="t"><b>${esc(p.nome)}</b><span class="p">${brl(p.pv)}</span></div>
       <div class="note">cód. ${esc(p.cod)}${p.codfab?' · ref. '+esc(p.codfab):''} · por ${esc(unN(p.un))}${p.estoque?` · estoque ${numBR(p.estoque)}`:' · sem estoque'}${p.uvp?'':' · <b>nunca vendido</b>: preço do cadastro'}</div>
       <div class="precos"><div><span>Última venda</span>${p.uvp?`<b>${brl(p.uvp)}</b><small>em ${diaCurto(p.uv)}${OLHO&&p.vh[0]&&p.vh[0][2]?' · '+esc(p.vh[0][2]):''}</small>`:'<small>sem venda registrada</small>'}</div>
-      ${OLHO?`<div class="cmp"><span>Última compra</span>${p.cu?`<b>${brl(p.cu)}</b><small>${cqD?'em '+esc(cqD):''}${cqF?' · '+esc(cqF):''}</small>`:'<small>sem compra registrada</small>'}</div>`:''}</div>
+      <div class="cmp"><span>Última compra</span>${p.ch.length?`${OLHO?`<b>${brl(p.ch[0][2])}</b>`:''}<small>em ${diaCurto(p.ch[0][0])} · <b class="forn">${esc(p.ch[0][1])}</b> · ${numBR(p.ch[0][3])} ${esc(p.ch[0][4].toLowerCase())}</small>`:p.cu&&OLHO?`<b>${brl(p.cu)}</b><small>custo do cadastro</small>`:'<small>sem compra registrada</small>'}</div></div>
+      ${p.ch.length>1?`<div class="vh ch"><span>Compras anteriores (mais recente primeiro)</span>${p.ch.slice(1).map(v=>`<div><b>${OLHO?brl(v[2]):''}</b><em>${diaCurto(v[0])}</em><i><b class="forn">${esc(v[1])}</b> · ${numBR(v[3])} ${esc(v[4].toLowerCase())}${OLHO&&Math.abs(v[5]-v[2])>=0.01?' a '+brl(v[5]):''}</i></div>`).join('')}</div>`:''}
       ${OLHO&&p.vh.length>1?`<div class="vh"><span>Vendas anteriores</span>${p.vh.slice(1).map(v=>`<div><b>${brl(v[0])}</b><em>${diaCurto(v[1])}</em><i>${esc(v[2]||'—')}${v[3]&&v[3]!==1?' · '+numBR(v[3])+' '+esc((p.un||'un').toLowerCase()):''}</i></div>`).join('')}</div>`:''}
       <div class="note">Cadastro do Eficaz: ${brl(p.preco)}${OLHO&&mgv!=null?` · margem na última venda <b>${mgv.toFixed(0)}%</b>`:''}${OLHO&&p.compra&&/\(com/.test(p.compra)?' · nota: '+esc(p.compra):''}</div>
       <div class="bts"><button type="button" class="btn sec sm" data-add="orcamento" data-i="${i}">+ Orçamento</button><button type="button" class="btn sec sm" data-add="venda" data-i="${i}">+ Venda</button></div></div>`; }).join('')||'<p class="vazio">Nada encontrado.</p>';
